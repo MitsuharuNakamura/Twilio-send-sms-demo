@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOPページ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff; /* 白 */
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #FF0000; /* 赤 */
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #800080; /* 紫 */
+        }
+
+        p {
+            font-size: 18px;
+            text-align: center;
+            max-width: 600px;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #FF0000; /* 赤 */
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #800080; /* 紫 */
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ようこそ</h1>
+        <h2>SMS送信ページ</h2>
+        <p>ログインに成功しました。ここでSMSを送信できます。</p>
+        <form id="sms-form">
+            <label for="to">送信先電話番号:</label>
+            <input type="text" id="to" name="to" required>
+
+            <label for="body">メッセージ:</label>
+            <textarea id="body" name="body" required></textarea>
+
+            <label for="code">認証コード:</label>
+            <input type="text" id="code" name="code" required>
+
+            <button type="submit">送信</button>
+        </form>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        document.getElementById('sms-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // フォームのデフォルト送信を防ぐ
+
+            const to = document.getElementById('to').value;
+            const body = document.getElementById('body').value;
+            const code = document.getElementById('code').value;
+
+            fetch('/send-sms', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'to': to,
+                    'body': body,
+                    'code': code
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageElement = document.getElementById('message');
+                if (data.status === 'success') {
+                    messageElement.style.color = 'green';
+                    messageElement.textContent = 'SMSが送信されました。';
+                } else {
+                    messageElement.style.color = 'red';
+                    messageElement.textContent = 'SMSの送信に失敗しました: ' + data.error;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
