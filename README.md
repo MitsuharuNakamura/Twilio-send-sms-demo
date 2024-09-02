@@ -14,8 +14,8 @@
    7. SMS_SEND_AUTH_CODE : 任意の値
 
 ## デプロイ手順  
-cd login
-twilio serverless:deploy
+`cd login`  
+`twilio serverless:deploy`  
 
 ## 実行手順
 1. https://<functionsのDomain>/login.html にアクセスする
